@@ -7,8 +7,7 @@ import classes from "./UserForm.module.css";
 const UserForm = (props) => {
   const [enteredName, setEnteredName] = useState("");
   const [enteredAge, setEnteredAge] = useState("");
-  const [nameIsValid, setNameIsValid] = useState(true);
-  const [ageIsValid, setAgeIsValid] = useState(true);
+  const [error, setError] = useState();
 
   const nameChangeHandler = (event) => {
     setEnteredName(event.target.value);
@@ -21,14 +20,20 @@ const UserForm = (props) => {
   const submitHandler = (event) => {
     event.preventDefault();
 
-    if (enteredName.trim() === "") {
-      setNameIsValid(false);
+    if (enteredName.trim() === "" || enteredAge < 1) {
+      setError({
+        title: "Invalid input",
+        message: "Please enter a valid name and age (non-empty values)."
+      });
 
       return;
     }
 
     if (enteredAge < 1) {
-      setAgeIsValid(false);
+      setError({
+        title: "Invalid age",
+        message: "Please enter a valid age (> 0)."
+      });
 
       return;
     }
@@ -41,29 +46,18 @@ const UserForm = (props) => {
 
     setEnteredName("");
     setEnteredAge("");
-    setNameIsValid(true);
-    setAgeIsValid(true);
+    setError();
   };
 
   const handleOkay = () => {
-    setNameIsValid(true);
-    setAgeIsValid(true);
+    setError();
   }
 
-  let errorMessage;
-  if (!nameIsValid) {
-    errorMessage="Please enter a valid name and age (non-empty values).";
-  }
-
-  if (!ageIsValid) {
-    errorMessage="Please enter a valid age (> 0).";
-  }
-  
   return (
     <>
-      {(!nameIsValid || !ageIsValid) && (<ErrorModal
-        title="Invalid input"
-        message={errorMessage}
+      {error && (<ErrorModal
+        title={error.title}
+        message={error.message}
         onOkay={handleOkay}
       />)}
       <Card className={classes.input}>
