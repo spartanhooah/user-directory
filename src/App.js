@@ -1,7 +1,7 @@
 import { useState } from "react";
-import UserForm from "./form/UserForm";
-import UserList from "./list/UserList";
-import ErrorModal from "./ui/error/ErrorModal";
+import UserForm from "./components/form/UserForm";
+import UserList from "./components/list/UserList";
+import ErrorModal from "./components/ui/error/ErrorModal";
 
 function App() {
   const [users, setUsers] = useState([]);
@@ -14,30 +14,29 @@ function App() {
     });
   };
 
-  const handleNameOkay = () => {
+  const handleValidationOkay = () => {
     setIsNameValid(true);
-  };
-
-  const handleAgeOkay = () => {
     setIsAgeValid(true);
   };
 
+  let errorMessage;
   if (!isNameValid) {
-    return <ErrorModal error="name" onOkay={handleNameOkay} />;
+    errorMessage="Please enter a valid name and age (non-empty values).";
   }
 
   if (!isAgeValid) {
-    return <ErrorModal error="age" onOkay={handleAgeOkay} />;
+    errorMessage="Please enter a valid age (> 0).";
   }
 
   return (
     <>
+      {(!isNameValid || !isAgeValid) && <ErrorModal title="Invalid input" message={errorMessage} onOkay={handleValidationOkay} />}
       <UserForm
         onAddUser={addUserHandler}
         setIsNameValid={setIsNameValid}
         setIsAgeValid={setIsAgeValid}
       />
-      <UserList users={users} />
+      {users.length > 0 && <UserList users={users} />}
     </>
   );
 }
