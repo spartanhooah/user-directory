@@ -1,24 +1,20 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Card from "../ui/card/Card";
 import Button from "../ui/button/Button";
 import ErrorModal from "../ui/error/ErrorModal";
 import classes from "./UserForm.module.css";
 
 const UserForm = (props) => {
-  const [enteredName, setEnteredName] = useState("");
-  const [enteredAge, setEnteredAge] = useState("");
+  const nameInputRef = useRef();
+  const ageInputRef = useRef();
+
   const [error, setError] = useState();
-
-  const nameChangeHandler = (event) => {
-    setEnteredName(event.target.value);
-  };
-
-  const ageChangeHandler = (event) => {
-    setEnteredAge(event.target.value);
-  };
 
   const submitHandler = (event) => {
     event.preventDefault();
+
+    const enteredName = nameInputRef.current.value;
+    const enteredAge = ageInputRef.current.value;
 
     if (enteredName.trim() === "" || enteredAge < 1) {
       setError({
@@ -43,9 +39,10 @@ const UserForm = (props) => {
       name: enteredName,
       age: +enteredAge,
     });
+    
+    nameInputRef.current.value = "";
+    ageInputRef.current.value = "";
 
-    setEnteredName("");
-    setEnteredAge("");
     setError();
   };
 
@@ -69,8 +66,7 @@ const UserForm = (props) => {
             <input
               id="username"
               type="text"
-              value={enteredName}
-              onChange={nameChangeHandler}
+              ref={nameInputRef}
             />
           </div>
           <div>
@@ -78,8 +74,7 @@ const UserForm = (props) => {
             <input
               id="username"
               type="number"
-              value={enteredAge}
-              onChange={ageChangeHandler}
+              ref={ageInputRef}
             />
           </div>
           <div>
